@@ -1,0 +1,3 @@
+python print-messages --user=chaselambda@gmail.com --api-key=L82nGQwwWneF0s9iqkGPqJDgmvmZVDu1
+
+curl -u chaselambda@gmail.com:L82nGQwwWneF0s9iqkGPqJDgmvmZVDu1 "https://api.zulip.com/v1/users/me/pointer" | python -m json.tool

@@ -12,11 +12,11 @@ db = client.zulipTree
 messages = db['messages']
 
 
-usage = """print-messages --user=<bot's email address> --api-key=<bot's api key> [options]
+usage = """message-watch --user=<bot's email address> --api-key=<bot's api key> [options]
 
 Prints out each message received by the indicated bot or user.
 
-Example: print-messages --user=tabbott@zulip.com --api-key=a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5
+Example: message-watch --user=tabbott@zulip.com --api-key=a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5
 
 You can omit --user and --api-key arguments if you have a properly set up ~/.zuliprc
 """

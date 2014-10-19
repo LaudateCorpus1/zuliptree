@@ -3,3 +3,4 @@ python-zulip/
 nohup.out
 *.swo
 *.pyc
+venv/

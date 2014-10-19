@@ -10,7 +10,7 @@ import pprint
 client = MongoClient('104.131.112.57', 49158)
 db = client.zulipTree
 app = Flask(__name__)
-DEBUG = True
+DEBUG = False
 
 def get_zulip_pointer():
     # TODO error checking..

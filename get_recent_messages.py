@@ -11,6 +11,7 @@ import pprint
 client = MongoClient('104.131.112.57', 49158)
 db = client.zulipTree
 
+# TODO have the two requests concurrent
 pointer_req = requests.get('https://api.zulip.com/v1/users/me/pointer',
                         auth=requests.auth.HTTPBasicAuth('chaselambda@gmail.com',
                                                          'L82nGQwwWneF0s9iqkGPqJDgmvmZVDu1'),

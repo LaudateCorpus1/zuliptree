@@ -1,2 +1,5 @@
 python-zulip/
 *.swp
+nohup.out
+*.swo
+*.pyc

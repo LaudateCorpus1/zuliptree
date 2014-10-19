@@ -84,8 +84,8 @@ def hello_world():
     return get_zulip_tree()
 
 def run_app():
-    print 'Called run_app'
-    #app.run('0.0.0.0', debug=True)
+    print 'Starting flask app'
+    app.run('0.0.0.0', debug=True)
 
 
 if __name__ == '__main__':

@@ -38,6 +38,14 @@ class MessageReader(gevent.Greenlet):
         print 'Reading messags'
         client.call_on_each_message(print_message)
 
+class FlaskRunner(gevent.Greenlet):
+    def __init__(self):
+        gevent.Greenlet.__init__(self)
+
+    def _run(self):
+        print 'Running flask app'
+        app.run('0.0.0.0', debug=True)
+
 def print_message(message):
     print 'Someone said: ', message['content']
     print 'Inserting Message:', message

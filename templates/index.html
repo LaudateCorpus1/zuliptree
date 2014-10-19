@@ -1,0 +1,10 @@
+{% for stream_name, subjects in streams.iteritems() %}
+    <div>
+        <b>{{ stream_name }}</b>
+        {% for subject in subjects %}
+        <div><a href="https://zulip.com/#narrow/stream/{{ stream_name }}/topic/{{ subject }}">{{ subject }}</a></div>
+
+        <!--<div><a href="{{ href }}">{{ name }}</a></div>-->
+        {% endfor %}
+    </div>
+{% endfor %}

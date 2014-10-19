@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 import pymongo
 import random
 from pymongo import MongoClient
@@ -25,7 +25,7 @@ def get_zulip_pointer():
 
 def get_zulip_subscriptions():
     if DEBUG:
-        return {'some_stream': True}
+        return {'checkins': True, 'programming': True}
     subscriptions_req = requests.get('https://api.zulip.com/v1/users/me/subscriptions',
                             auth=requests.auth.HTTPBasicAuth('chaselambda@gmail.com',
                                                              'L82nGQwwWneF0s9iqkGPqJDgmvmZVDu1'),
@@ -51,7 +51,8 @@ def get_zulip_tree():
 
     streams = {}
     if DEBUG:
-        streams['some_stream'] = ['subject here']
+        streams['checkins'] = ['Russell']
+        streams['programming'] = ['Russell']
 
     messages = db['messages']
     for message in messages.find({'id': {'$gt': pointer}}):
@@ -70,7 +71,8 @@ def get_zulip_tree():
         assert(stream in subscriptions)
         streams[stream] = list(set(subjects))
 
-    return json.dumps(streams, sort_keys=True, indent=4, separators=(',', ': '))
+    #return json.dumps(streams, sort_keys=True, indent=4, separators=(',', ': '))
+    return render_template('index.html', streams=streams)
 
 def get_google():
     req = requests.get('http://google.com')

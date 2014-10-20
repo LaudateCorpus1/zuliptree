@@ -7,19 +7,24 @@ from bson.json_util import dumps
 import requests
 import pprint
 import os
+import urllib
 
 client = MongoClient('104.131.112.57', 49158)
 db = client.zulipTree
 app = Flask(__name__)
 DEBUG = 'DEBUG' in os.environ and os.environ['DEBUG'] == 'True'
-debug_streams = {'checkins': ['Russell'],
-                'code review': ['Ping me if you want code review/pairing']}
+debug_streams = {'checkins': {'Russell': ['bob']},
+        'code review': {'Ping me if you want code review/pairing': ['Peter Seibel']}}
 
 def streams_to_subscriptions(streams):
     ret= {}
     for stream, l in streams.iteritems():
         ret[stream] = True
     return ret
+
+@app.template_filter('urlencode2')
+def urlencode2(s):
+    return urllib.quote(s, safe='')
 
 def get_zulip_pointer():
     # TODO error checking..
@@ -74,13 +79,18 @@ def get_zulip_tree():
 
         if visible_message(subscriptions, message):
             stream = message['display_recipient']
+            topic = message['subject']
+            author = message['sender_full_name'] # TODO fix
             if stream not in streams:
-                streams[stream] = []
-            streams[stream].append(message['subject'])
+                streams[stream] = {}
+            if topic not in streams[stream]:
+                streams[stream][topic] = []
+            streams[stream][topic].append(author)
 
-    for stream, subjects in streams.iteritems():
+    for stream, topics in streams.iteritems():
         assert(stream in subscriptions)
-        streams[stream] = list(set(subjects))
+        for topic, authors in topics.iteritems():
+            topics[topic] = list(set(authors))
 
     #return json.dumps(streams, sort_keys=True, indent=4, separators=(',', ': '))
     return render_template('index.html', streams=streams)

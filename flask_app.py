@@ -6,11 +6,12 @@ import json
 from bson.json_util import dumps
 import requests
 import pprint
+import os
 
 client = MongoClient('104.131.112.57', 49158)
 db = client.zulipTree
 app = Flask(__name__)
-DEBUG = False
+DEBUG = os.environ['DEBUG'] == 'True'
 
 def get_zulip_pointer():
     # TODO error checking..

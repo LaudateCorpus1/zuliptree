@@ -30,7 +30,7 @@ def main():
     client = zulip.init_from_options(options)
 
 def print_message(message):
-    print 'Someone said: ', message['content']
+    print 'Someone said: ', message['content'].encode('utf-8')
     print 'Inserting Message:', message
     messages.insert(message)
 

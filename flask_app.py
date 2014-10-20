@@ -38,12 +38,15 @@ def get_zulip_subscriptions():
     return subscriptions
 
 def visible_message(subscriptions, message):
-    stream = message['display_recipient']
-    if type(stream) in [str, unicode]:
-        return stream in subscriptions and subscriptions[stream]
-    else:
-        assert(type(stream) is list)
-        assert(message['type'] == 'private')
+    try:
+        stream = message['display_recipient']
+        if type(stream) in [str, unicode]:
+            return subscriptions[stream]
+        else:
+            assert(type(stream) is list)
+            assert(message['type'] == 'private')
+    except KeyError:
+        return False
 
 def get_zulip_tree():
     pointer = get_zulip_pointer()

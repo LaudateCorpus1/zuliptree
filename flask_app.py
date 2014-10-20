@@ -104,6 +104,10 @@ def get_google():
 def hello_world():
     return get_zulip_tree()
 
+@app.route('/blah')
+def blah():
+    return 'hello there, this is blah'
+
 def run_app():
     print 'Starting flask app'
     app.run('0.0.0.0', debug=True)

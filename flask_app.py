@@ -80,9 +80,7 @@ def get_zulip_tree():
 
         if visible_message(subscriptions, message):
             stream = message['display_recipient']
-            topic = message['subject']
-            author = message['sender_full_name'] # TODO fix
-            streams[stream][topic].append(author)
+            streams[stream][message['subject']].append(message['sender_full_name'])
 
     for stream, topics in streams.iteritems():
         assert(stream in subscriptions)

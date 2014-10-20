@@ -12,6 +12,14 @@ client = MongoClient('104.131.112.57', 49158)
 db = client.zulipTree
 app = Flask(__name__)
 DEBUG = 'DEBUG' in os.environ and os.environ['DEBUG'] == 'True'
+debug_streams = {'checkins': ['Russell'],
+                'code review': ['Ping me if you want code review/pairing']}
+
+def streams_to_subscriptions(streams):
+    ret= {}
+    for stream, l in streams.iteritems():
+        ret[stream] = True
+    return ret
 
 def get_zulip_pointer():
     # TODO error checking..
@@ -26,7 +34,7 @@ def get_zulip_pointer():
 
 def get_zulip_subscriptions():
     if DEBUG:
-        return {'checkins': True, 'programming': True}
+        return streams_to_subscriptions(debug_streams)
     subscriptions_req = requests.get('https://api.zulip.com/v1/users/me/subscriptions',
                             auth=requests.auth.HTTPBasicAuth('chaselambda@gmail.com',
                                                              'L82nGQwwWneF0s9iqkGPqJDgmvmZVDu1'),
@@ -55,8 +63,7 @@ def get_zulip_tree():
 
     streams = {}
     if DEBUG:
-        streams['checkins'] = ['Russell']
-        streams['programming'] = ['Russell']
+        streams = debug_streams
 
     messages = db['messages']
     for message in messages.find({'id': {'$gt': pointer}}):

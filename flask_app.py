@@ -25,7 +25,7 @@ def streams_to_subscriptions(streams):
 
 @app.template_filter('urlencode2')
 def urlencode2(s):
-    return urllib.quote(s, safe='')
+    return urllib.quote(s.encode('utf8'), safe='')
 
 def get_zulip_pointer():
     # TODO error checking..
@@ -75,6 +75,7 @@ def get_zulip_tree():
     for message in messages.find({'id': {'$gt': pointer}}):
         #print dumps(message, sort_keys=True, indent=4, separators=(',', ': '))
         if len(message['subject_links']) > 0:
+            # TODO log error?
             print 'NOTICE: Message has some subject links:'
             print dumps(message, sort_keys=True, indent=4, separators=(',', ': '))
 

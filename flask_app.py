@@ -8,6 +8,7 @@ import requests
 import pprint
 import os
 import urllib
+from collections import defaultdict
 
 client = MongoClient('104.131.112.57', 49158)
 db = client.zulipTree
@@ -66,7 +67,7 @@ def get_zulip_tree():
     subscriptions = get_zulip_subscriptions()
     print 'pointer is', pointer
 
-    streams = {}
+    streams = defaultdict(lambda: defaultdict(list))
     if DEBUG:
         streams = debug_streams
 
@@ -81,10 +82,6 @@ def get_zulip_tree():
             stream = message['display_recipient']
             topic = message['subject']
             author = message['sender_full_name'] # TODO fix
-            if stream not in streams:
-                streams[stream] = {}
-            if topic not in streams[stream]:
-                streams[stream][topic] = []
             streams[stream][topic].append(author)
 
     for stream, topics in streams.iteritems():

@@ -17,6 +17,7 @@ class MessageReader(gevent.Greenlet):
 
     def _run(self):
         print 'run reader'
+        # TODO get rid of this key.. and revoke the key
         zulip_watch.zulip_watch('chaselambda@gmail.com', 'L82nGQwwWneF0s9iqkGPqJDgmvmZVDu1')
 
 def print_message(message):

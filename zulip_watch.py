@@ -31,19 +31,22 @@ users = db['users']
 
 #     client = zulip.init_from_options(options)
 
-def print_message(message):
-    print 'Someone said: ', message['content'].encode('utf-8')
-    print 'Inserting Message:', message
-    messages.insert(message)
+def print_message_wrapper(email):
+    def print_message(message):
+        print 'Someone said: ', message['content'].encode('utf-8')
+        print 'Inserting Message:', message
+        message['watcher_email'] = email
+        messages.insert(message)
+    return print_message
 
 def zulip_watch(email, api_key):
     print 'Watching for Zulip Messages'
     client = zulip.Client(email=email, api_key=api_key, config_file=None,
                   verbose=False, site=None, client='API: Python')
-    client.call_on_each_message(print_message)
+    client.call_on_each_message(print_message_wrapper(email))
 
 
 
 # This is a blocking call, and will continuously poll for new messages
 if __name__ == '__main__':
-    zulip_watch_all()
+    print 'Do not run this file...'

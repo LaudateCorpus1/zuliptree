@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect, url_for
 import pymongo
 import random
 from pymongo import MongoClient
@@ -38,8 +38,8 @@ def get_zulip_pointer():
     if DEBUG:
         return 100
     pointer_req = requests.get('https://api.zulip.com/v1/users/me/pointer',
-                            auth=requests.auth.HTTPBasicAuth('chaselambda@gmail.com',
-                                                             'L82nGQwwWneF0s9iqkGPqJDgmvmZVDu1'),
+                            auth=requests.auth.HTTPBasicAuth(session['email'],
+                                                             session['key']),
                             verify=True)
     return int(pointer_req.json()['pointer'])
 
@@ -47,8 +47,8 @@ def get_zulip_subscriptions():
     if DEBUG:
         return streams_to_subscriptions(debug_streams)
     subscriptions_req = requests.get('https://api.zulip.com/v1/users/me/subscriptions',
-                            auth=requests.auth.HTTPBasicAuth('chaselambda@gmail.com',
-                                                             'L82nGQwwWneF0s9iqkGPqJDgmvmZVDu1'),
+                            auth=requests.auth.HTTPBasicAuth(session['email'],
+                                                             session['key']),
                             verify=True)
 
     subscriptions = {}
@@ -68,7 +68,11 @@ def visible_message(subscriptions, message):
         return False
 
 def get_zulip_tree():
-    pointer = get_zulip_pointer()
+    try:
+        pointer = get_zulip_pointer()
+    except Exception as e:
+        return 'Your login did not seem to work.. try <a href="/login">Logging in</a> again?'
+
     subscriptions = get_zulip_subscriptions()
     print 'pointer is', pointer
 
@@ -77,7 +81,7 @@ def get_zulip_tree():
         streams = debug_streams
 
     messages = db['messages']
-    for message in messages.find({'id': {'$gt': pointer}}):
+    for message in messages.find({'id': {'$gt': pointer}, 'watcher_email': session['email']}):
         #print dumps(message, sort_keys=True, indent=4, separators=(',', ': '))
         if len(message['subject_links']) > 0:
             # TODO log error?
@@ -103,17 +107,24 @@ def get_google():
 
 @app.route('/')
 def hello_world():
+    if 'email' not in session:
+        return redirect(url_for('login'))
     return get_zulip_tree()
 
 @app.route('/blah')
 def blah():
     return 'hello there, this is blah'
 
+@app.route('/logout')
+def logout():
+    session.pop('email', None)
+    return 'Logged out! <a href="/login">Login</a>'
+
 @app.route('/login', methods=['GET'])
 @app.route('/login')
 def login():
     if 'email' in session:
-        return 'You already are logged in :).. TODO logout'
+        return 'You already are logged in as {} :).. <a href="/logout">Logout</a>'.format(session['email'])
     return render_template('login.html')
 
 @app.route('/login', methods=['POST'])
@@ -122,13 +133,19 @@ def login_post():
     if found_user.count() > 0:
         # Set the users session
         session['email'] = request.form['zulip_email']
+        session['key'] = found_user[0]['zulip_key']
+        print 'Key saved', session['key']
 
-        return 'You already registered; your session has been set'
+        return redirect('/')
     user = {}
     user['zulip_key'] = request.form['zulip_key']
     user['zulip_email'] = request.form['zulip_email']
+
+    session['email'] = request.form['zulip_email']
+    session['key'] = user['zulip_email']
+
     users.insert(user)
-    return 'thank you!  TODO save this to the user\'s session'
+    return redirect('/')
 
 
 def run_app():

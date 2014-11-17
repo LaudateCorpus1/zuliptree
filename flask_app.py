@@ -37,11 +37,13 @@ def get_zulip_pointer():
     # TODO have the two requests concurrent
     if DEBUG:
         return 100
-    pointer_req = requests.get('https://api.zulip.com/v1/users/me/pointer',
-                            auth=requests.auth.HTTPBasicAuth(session['email'],
-                                                             session['key']),
-                            verify=True)
+
+    return get_zulip_pointer_nosession(session['email'], session['key'])
+
+def get_zulip_pointer_nosession(email, key):
+    pointer_req = requests.get('https://api.zulip.com/v1/users/me/pointer',auth=requests.auth.HTTPBasicAuth(email, key),verify=True)
     return int(pointer_req.json()['pointer'])
+
 
 def get_zulip_subscriptions():
     if DEBUG:
@@ -68,11 +70,7 @@ def visible_message(subscriptions, message):
         return False
 
 def get_zulip_tree():
-    try:
-        pointer = get_zulip_pointer()
-    except Exception as e:
-        return 'Your login did not seem to work.. try <a href="/login">Logging in</a> again?'
-
+    pointer = get_zulip_pointer()
     subscriptions = get_zulip_subscriptions()
     print 'pointer is', pointer
 
@@ -141,8 +139,13 @@ def login_post():
     user['zulip_key'] = request.form['zulip_key']
     user['zulip_email'] = request.form['zulip_email']
 
+    try:
+        pointer = get_zulip_pointer_nosession(user['zulip_email'], user['zulip_key'])
+    except Exception as e:
+        return 'Your login did not seem to work.. try <a href="/login">Logging in</a> again?'
+
     session['email'] = request.form['zulip_email']
-    session['key'] = user['zulip_email']
+    session['key'] = user['zulip_key']
 
     users.insert(user)
     return redirect('/')

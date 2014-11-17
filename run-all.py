@@ -10,6 +10,7 @@ from gevent import monkey
 from pymongo import MongoClient
 import flask_app
 import zulip_watch
+import time
 
 client = MongoClient('127.0.0.1', 27017)
 db = client.zulipTree
@@ -26,26 +27,34 @@ class MessageReader(gevent.Greenlet):
         # TODO get rid of this key.. and revoke the key
         zulip_watch.zulip_watch(self.email, self.key)
 
+class NewUserPoller(gevent.Greenlet):
+    def __init__(self):
+        gevent.Greenlet.__init__(self)
 
-def zulip_watch_all():
-    readers = []
+    def _run(self):
+        print 'RUN NewUserPoller'
+        current_emails = []
+        while True:
+            time.sleep(5)
+            current_emails = poll_new_users(current_emails)
+
+def poll_new_users(current_emails):
+    return_emails = list(current_emails)
+
     for user in users.find():
-        print 'USER', user['zulip_key'], user['zulip_email']
-        message_reader = MessageReader(user['zulip_email'], user['zulip_key'])
-        message_reader.start()
-        readers.append(message_reader)
+        if user['zulip_email'] not in return_emails:
+            print 'NEW USER', user['zulip_key'], user['zulip_email']
+            message_reader = MessageReader(user['zulip_email'], user['zulip_key'])
+            message_reader.start()
 
-    return readers
-
+            return_emails.append(user['zulip_email'])
+    return return_emails
 
 # This is a blocking call, and will continuously poll for new messages
 if __name__ == '__main__':
     monkey.patch_all(aggressive=False)
-    readers = zulip_watch_all()
+
+    newUserPoller = NewUserPoller()
+    newUserPoller.start()
 
     flask_app.run_app()
-
-    # Wait for all the readers to finish (should be never)
-    for reader in readers:
-        reader.join()
-

@@ -95,7 +95,7 @@ def get_zulip_tree():
             topics[topic] = list(set(authors))
 
     #return json.dumps(streams, sort_keys=True, indent=4, separators=(',', ': '))
-    return render_template('index.html', streams=streams)
+    return render_template('index.html', streams=streams, no_streams=len(streams) == 0)
 
 def get_google():
     req = requests.get('http://google.com')

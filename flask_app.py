@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import pymongo
 import random
 from pymongo import MongoClient
@@ -10,8 +10,11 @@ import os
 import urllib
 from collections import defaultdict
 
-client = MongoClient('104.131.112.57', 49158)
+# client = MongoClient('104.131.112.57', 49158)
+client = MongoClient('127.0.0.1', 27017)
 db = client.zulipTree
+users = db['users']
+
 app = Flask(__name__)
 DEBUG = 'DEBUG' in os.environ and os.environ['DEBUG'] == 'True'
 debug_streams = {'checkins': {'Russell': ['bob']},
@@ -103,6 +106,20 @@ def hello_world():
 @app.route('/blah')
 def blah():
     return 'hello there, this is blah'
+
+@app.route('/login', methods=['GET'])
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/login', methods=['POST'])
+def login_post():
+    user = {}
+    user['zulip_key'] = request.form['zulip_key']
+    user['zulip_email'] = request.form['zulip_email']
+    users.insert(user)
+    return 'thank you!  TODO save this to the user\'s session'
+
 
 def run_app():
     print 'Starting flask app'

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 import pymongo
 import random
 from pymongo import MongoClient
@@ -16,6 +16,8 @@ db = client.zulipTree
 users = db['users']
 
 app = Flask(__name__)
+app.secret_key = 'A0Zr98j/3yX R~XHH!kalsdjkas#$$$@#$T'
+
 DEBUG = 'DEBUG' in os.environ and os.environ['DEBUG'] == 'True'
 debug_streams = {'checkins': {'Russell': ['bob']},
         'code review': {'Ping me if you want code review/pairing': ['Peter Seibel']}}
@@ -110,10 +112,18 @@ def blah():
 @app.route('/login', methods=['GET'])
 @app.route('/login')
 def login():
+    if 'email' in session:
+        return 'You already are logged in :).. TODO logout'
     return render_template('login.html')
 
 @app.route('/login', methods=['POST'])
 def login_post():
+    found_user = users.find({'zulip_email': request.form['zulip_email']})
+    if found_user.count() > 0:
+        # Set the users session
+        session['email'] = request.form['zulip_email']
+
+        return 'You already registered; your session has been set'
     user = {}
     user['zulip_key'] = request.form['zulip_key']
     user['zulip_email'] = request.form['zulip_email']

@@ -6,7 +6,7 @@
             <b>{{ stream_name }}</b>
             {% for subject, authors in subjects.iteritems() %}
             <div>
-                <a href="https://zulip.com/#narrow/stream/{{ stream_name | urlencode2 }}/topic/{{ subject | urlencode2 }}">{{ subject }}</a>
+                <a href="https://zulip.com/#narrow/stream/{{ stream_name | urlencode2 }}/topic/{{ subject | urlencode2 }}" target="_blank">{{ subject }}</a>
                 <div style="margin-left: 10px">
                     {{ ','.join(authors) }}
                 </div>

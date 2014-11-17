@@ -9,7 +9,7 @@ from pymongo import MongoClient
 import zulip
 
 #client = MongoClient('104.131.112.57', 49158)
-client = MongoClient('127.0.0.1', 27017)
+client = MongoClient('104.131.112.57', 49158)
 db = client.zulipTree
 messages = db['messages']
 users = db['users']

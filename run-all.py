@@ -12,7 +12,7 @@ import flask_app
 import zulip_watch
 import time
 
-client = MongoClient('127.0.0.1', 27017)
+client = MongoClient('104.131.112.57', 49158)
 db = client.zulipTree
 users = db['users']
 

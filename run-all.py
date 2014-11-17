@@ -20,11 +20,6 @@ class MessageReader(gevent.Greenlet):
         # TODO get rid of this key.. and revoke the key
         zulip_watch.zulip_watch('chaselambda@gmail.com', 'L82nGQwwWneF0s9iqkGPqJDgmvmZVDu1')
 
-def print_message(message):
-    print 'Someone said: ', message['content']
-    print 'Inserting Message:', message
-    messages.insert(message)
-
 # This is a blocking call, and will continuously poll for new messages
 if __name__ == '__main__':
     monkey.patch_all(aggressive=False)

@@ -1,7 +1,28 @@
-If you've already signed up, skip the key field.
+If you've already signed up, skip the key field. You only need to enter your zulip key once.
 
 <form method='post'>
 <input type='text' name='zulip_email' placeholder='Zulip Email'/>
-<input type='text' name='zulip_key' placeholder='Zulip Key'/>
-<input type='submit' value='Give us your secrets!'>
+<input type='text' name='zulip_key' placeholder='Zulip Key (New Users Only)'/>
+<input type='submit' value='Login!'>
 </form>
+
+<br>
+<b>Why do I have to give you my zulip key?</b>
+<pre>
+3 reasons:
+1) We need to find your last read location.
+2) We also use it to find which threads you have not muted.
+3) There isn't any other way to get this information (like oauth)
+</pre>
+
+<br>
+<b>Are my private messages listed?</b>
+<pre>
+No. Only the threads you have not muted are listed.
+</pre>
+
+<br>
+<b>Can others log in as me?</b>
+<pre>
+Yes! But they will only get a hint as to what theads you are subscribed to and when you last read zulip. Other private information like private messages are not shown.
+</pre>

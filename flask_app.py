@@ -10,7 +10,9 @@ import os
 import urllib
 from collections import defaultdict
 
-client = MongoClient('104.131.112.57', 49158)
+with open('mongo-pass.conf', 'r') as f:
+    mpass = f.read().strip()
+    client = MongoClient('mongodb://chase:{}@104.131.112.57'.format(mpass))
 db = client.zulipTree
 users = db['users']
 

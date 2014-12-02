@@ -5,11 +5,10 @@ import sys
 import os
 import optparse
 import random
-from pymongo import MongoClient
 import zulip
+import conf
 
-#client = MongoClient('104.131.112.57', 49158)
-client = MongoClient('104.131.112.57', 49158)
+client = conf.get_db_client()
 db = client.zulipTree
 messages = db['messages']
 users = db['users']

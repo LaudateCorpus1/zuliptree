@@ -4,4 +4,3 @@ nohup.out
 *.swo
 *.pyc
 venv/
-mongo-pass.conf

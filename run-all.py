@@ -7,12 +7,12 @@ import optparse
 import random
 import gevent
 from gevent import monkey
-from pymongo import MongoClient
 import flask_app
 import zulip_watch
 import time
+import conf
 
-client = MongoClient('104.131.112.57', 49158)
+client = conf.get_db_client()
 db = client.zulipTree
 users = db['users']
 

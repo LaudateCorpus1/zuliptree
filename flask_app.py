@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import pymongo
 import random
-from pymongo import MongoClient
 import json
 from bson.json_util import dumps
 import requests
@@ -9,10 +8,9 @@ import pprint
 import os
 import urllib
 from collections import defaultdict
+import conf
 
-with open('mongo-pass.conf', 'r') as f:
-    mpass = f.read().strip()
-    client = MongoClient('mongodb://chase:{}@104.131.112.57'.format(mpass))
+client = conf.get_db_client()
 db = client.zulipTree
 users = db['users']
 

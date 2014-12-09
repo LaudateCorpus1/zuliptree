@@ -9,6 +9,7 @@ import os
 import urllib
 from collections import defaultdict
 import conf
+import re
 
 client = conf.get_db_client()
 db = client.zulipTree
@@ -29,7 +30,8 @@ def streams_to_subscriptions(streams):
 
 @app.template_filter('urlencode2')
 def urlencode2(s):
-    return urllib.quote(s.encode('utf8'), safe='')
+    ret = urllib.quote(s.encode('utf8'), safe='')
+    return re.sub('\.', '.2E', ret)
 
 def get_zulip_pointer():
     # TODO error checking..

@@ -11,3 +11,6 @@ mongo:
 	git checkout deploy
 	mongo --authenticationDatabase admin -u chase -p `cat mongo-pass.conf` --host 104.131.112.57 --port 27017
 	git checkout master
+
+test:
+	py.test

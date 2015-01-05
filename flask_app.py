@@ -18,7 +18,9 @@ users = db['users']
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!kalsdjkas#$$$@#$T'
 
-DEBUG = 'DEBUG' in os.environ and os.environ['DEBUG'] == 'True'
+def is_debug():
+    return 'DEBUG' in os.environ and os.environ['DEBUG'] == 'True'
+
 debug_streams = {'checkins': {'Russell': ['bob']},
         'code review': {'Ping me if you want code review/pairing': ['Peter Seibel']}}
 
@@ -36,7 +38,8 @@ def urlencode2(s):
 def get_zulip_pointer():
     # TODO error checking..
     # TODO have the two requests concurrent
-    if DEBUG:
+    if is_debug():
+        print 'DEBUG'
         return 100
 
     return get_zulip_pointer_nosession(session['email'], session['key'])
@@ -47,7 +50,7 @@ def get_zulip_pointer_nosession(email, key):
 
 
 def get_zulip_subscriptions():
-    if DEBUG:
+    if is_debug():
         return streams_to_subscriptions(debug_streams)
     subscriptions_req = requests.get('https://api.zulip.com/v1/users/me/subscriptions',
                             auth=requests.auth.HTTPBasicAuth(session['email'],
@@ -76,7 +79,7 @@ def get_zulip_tree():
     print 'pointer is', pointer
 
     streams = defaultdict(lambda: defaultdict(list))
-    if DEBUG:
+    if is_debug():
         streams = debug_streams
 
     messages = db['messages']

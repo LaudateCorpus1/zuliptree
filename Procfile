@@ -1,1 +1,1 @@
-web: python run-all.py
+web: python run_all.py

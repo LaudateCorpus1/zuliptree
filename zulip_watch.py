@@ -7,11 +7,17 @@ import optparse
 import random
 import zulip
 import conf
+import logging
+import time
+import pymongo
+import gevent
 
 client = conf.get_db_client()
 db = client.zulipTree
 messages = db['messages']
 users = db['users']
+def is_debug():
+    return 'DEBUG' in os.environ and os.environ['DEBUG'] == 'True'
 
 
 # def main():
@@ -39,10 +45,18 @@ def print_message_wrapper(email):
     return print_message
 
 def zulip_watch(email, api_key):
-    print 'Watching for Zulip Messages'
-    client = zulip.Client(email=email, api_key=api_key, config_file=None,
-                  verbose=False, site=None, client='API: Python')
-    client.call_on_each_message(print_message_wrapper(email))
+    while True:
+        try:
+            print("Starting (or restarting) watcher for {}".format(email))
+            client = zulip.Client(email=email, api_key=api_key, config_file=None,
+                          verbose=False, site=None, client='API: Python')
+            client.call_on_each_message(print_message_wrapper(email))
+            if is_debug():
+                return 0
+        except:
+            logging.exception("zulip_watch failed. Sleeping for a bit before restarting.")
+            if not is_debug():
+                time.sleep(5)
 
 
 

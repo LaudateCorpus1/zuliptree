@@ -19,6 +19,7 @@ users = db['users']
 def is_debug():
     return 'DEBUG' in os.environ and os.environ['DEBUG'] == 'True'
 
+# oh hey there
 
 # def main():
 #     usage = """message-watch --user=<bot's email address> --api-key=<bot's api key> [options]
